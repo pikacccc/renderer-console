@@ -99,6 +99,7 @@ namespace mathematics {
 		const float* operator[](int rowIndex) const;
 
 		vec4 operator*(const vec4& other);
+		mat4 operator*(const mat4& other);
 	};
 
 

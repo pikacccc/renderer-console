@@ -159,6 +159,33 @@ mathematics::vec4 mathematics::mat4::operator*(const vec4& other)
 	};
 }
 
+mathematics::mat4 mathematics::mat4::operator*(const mat4& other)
+{
+	mathematics::mat4 res;
+
+	res[0][0] = this->mat[0][0] * other[0][0] + this->mat[0][1] * other[1][0] + this->mat[0][2] * other[2][0] + this->mat[0][3] * other[3][0];
+	res[0][1] = this->mat[0][0] * other[0][1] + this->mat[0][1] * other[1][1] + this->mat[0][2] * other[2][1] + this->mat[0][3] * other[3][1];
+	res[0][2] = this->mat[0][0] * other[0][2] + this->mat[0][1] * other[1][2] + this->mat[0][2] * other[2][2] + this->mat[0][3] * other[3][2];
+	res[0][3] = this->mat[0][0] * other[0][3] + this->mat[0][1] * other[1][3] + this->mat[0][2] * other[2][3] + this->mat[0][3] * other[3][3];
+
+	res[1][0] = this->mat[1][0] * other[0][0] + this->mat[1][1] * other[1][0] + this->mat[1][2] * other[2][0] + this->mat[1][3] * other[3][0];
+	res[1][1] = this->mat[1][0] * other[0][1] + this->mat[1][1] * other[1][1] + this->mat[1][2] * other[2][1] + this->mat[1][3] * other[3][1];
+	res[1][2] = this->mat[1][0] * other[0][2] + this->mat[1][1] * other[1][2] + this->mat[1][2] * other[2][2] + this->mat[1][3] * other[3][2];
+	res[1][3] = this->mat[1][0] * other[0][3] + this->mat[1][1] * other[1][3] + this->mat[1][2] * other[2][3] + this->mat[1][3] * other[3][3];
+
+	res[2][0] = this->mat[2][0] * other[0][0] + this->mat[2][1] * other[1][0] + this->mat[2][2] * other[2][0] + this->mat[2][3] * other[3][0];
+	res[2][1] = this->mat[2][0] * other[0][1] + this->mat[2][1] * other[1][1] + this->mat[2][2] * other[2][1] + this->mat[2][3] * other[3][1];
+	res[2][2] = this->mat[2][0] * other[0][2] + this->mat[2][1] * other[1][2] + this->mat[2][2] * other[2][2] + this->mat[2][3] * other[3][2];
+	res[2][3] = this->mat[2][0] * other[0][3] + this->mat[2][1] * other[1][3] + this->mat[2][2] * other[2][3] + this->mat[2][3] * other[3][3];
+
+	res[3][0] = this->mat[3][0] * other[0][0] + this->mat[3][1] * other[1][0] + this->mat[3][2] * other[2][0] + this->mat[3][3] * other[3][0];
+	res[3][1] = this->mat[3][0] * other[0][1] + this->mat[3][1] * other[1][1] + this->mat[3][2] * other[2][1] + this->mat[3][3] * other[3][1];
+	res[3][2] = this->mat[3][0] * other[0][2] + this->mat[3][1] * other[1][2] + this->mat[3][2] * other[2][2] + this->mat[3][3] * other[3][2];
+	res[3][3] = this->mat[3][0] * other[0][3] + this->mat[3][1] * other[1][3] + this->mat[3][2] * other[2][3] + this->mat[3][3] * other[3][3];
+
+	return res;
+}
+
 mathematics::quaternion mathematics::quaternion::operator*(const quaternion& other) const
 {
 	return quaternion{

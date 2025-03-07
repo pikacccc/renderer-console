@@ -11,10 +11,10 @@
 int screen[WIDTH][HEIGHT];
 
 int main() {
-	std::vector<mathematics::vec3> triangle = {
-		mathematics::vec3{ 0.0f, 1.0f, 0.0f},
-		mathematics::vec3{ 0.5f, 0.0f, 0.0f},
-		mathematics::vec3{-0.5f, 0.0f, 0.0f},
+	std::vector<mathematics::vec4> triangle = {
+		mathematics::vec4{ 0.0f, 1.0f, 0.0f, 0.0f},
+		mathematics::vec4{ 0.5f, 0.0f, 0.0f, 0.0f},
+		mathematics::vec4{-0.5f, 0.0f, 0.0f, 0.0f},
 	};
 
 	mathematics::vec3 eye{ 0.0f, 0.0f, -1.0f };
@@ -22,10 +22,14 @@ int main() {
 	mathematics::vec3 up{ 0.0f, 1.0f,  0.0f };
 
 	mathematics::mat4 model;
-
+	linear_transformation::get_translation_mat(mathematics::vec3{ 0.0f,0.0f,0.0f }, model);
 	mathematics::mat4 view;
 	linear_transformation::get_look_at_mat(eye, enter, up, view);
 
 	mathematics::mat4 project;
 	linear_transformation::get_projection_mat(FOV, ((float)WIDTH) / ((float)HEIGHT), NEAR, FAR, project);
+
+	triangle[0] = project * (view * (model * triangle[0]));
+	triangle[1] = project * (view * (model * triangle[1]));
+	triangle[2] = project * (view * (model * triangle[2]));
 }
