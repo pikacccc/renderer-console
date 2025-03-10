@@ -17,9 +17,9 @@ void linear_transformation::get_rotation_mat(const mathematics::vec3& axis, floa
 	res[1][2] = axis.y * axis.z * (1 - cos_theta) - axis.x * sin_theta;
 	res[1][3] = 0;
 
-	res[2][0] = axis.y * axis.x * (1 - cos_theta) + axis.z * sin_theta;
-	res[2][1] = cos_theta + axis.y * axis.y * (1 - cos_theta);
-	res[2][2] = axis.y * axis.z * (1 - cos_theta) - axis.x * sin_theta;
+	res[2][0] = axis.z * axis.x * (1 - cos_theta) - axis.y * sin_theta;
+	res[2][1] = axis.z * axis.y * (1 - cos_theta) + axis.x * sin_theta;
+	res[2][2] = cos_theta + axis.z * axis.z * (1 - cos_theta);
 	res[2][3] = 0;
 
 	res[3][0] = 0;
@@ -170,29 +170,27 @@ void linear_transformation::get_projection_mat(float right, float left, float to
 
 void linear_transformation::get_projection_mat(float fovy, float aspect, float near, float far, mathematics::mat4& res)
 {
-	float rad = fovy * mathematics::PI / 180.0f;
+	float rad = acos(-1.0f) / 180;
 
-	float tan_half_fovy = tan(rad / 2.0f);
+	float tan_half_fovy = tan(fovy / 2.0f * rad);
 
 	float top = near * tan_half_fovy;
-	float bottom = -top;
 	float right = top * aspect;
-	float left = -right;
 
-	res[0][0] = (2 * near) / (right - left);
+	res[0][0] = near / right;
 	res[0][1] = 0;
-	res[0][2] = (right + left) / (right - left);
+	res[0][2] = 0;
 	res[0][3] = 0;
 
 	res[1][0] = 0;
-	res[1][1] = (2 * near) / (top - bottom);
-	res[1][2] = (top + bottom) / (top - bottom);
+	res[1][1] = near / top;
+	res[1][2] = 0;
 	res[1][3] = 0;
 
 	res[2][0] = 0;
 	res[2][1] = 0;
-	res[2][2] = -(far + near) / (far - near);
-	res[2][3] = -2 * far * near / (far - near);
+	res[2][2] = -1;
+	res[2][3] = -2 * near;
 
 	res[3][0] = 0;
 	res[3][1] = 0;
