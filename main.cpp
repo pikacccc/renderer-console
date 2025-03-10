@@ -2,11 +2,12 @@
 #include <iostream>
 #include <cmath>
 #include <thread>
+#include <windows.h>
 #include "mathematics.h"
 #include "linear_transformation.h"
 
-#define WIDTH 80
-#define HEIGHT 40
+#define WIDTH 800
+#define HEIGHT 400
 #define FOV 40.0
 #define NEAR 0.1
 #define FAR 100.0
@@ -14,6 +15,8 @@
 int screen[WIDTH][HEIGHT];
 
 void draw_line(mathematics::vec2 start, mathematics::vec2 end);
+std::string render_screen();
+void SetConsoleFontSize(int fontSize);
 
 int main() {
 	// 定义立方体的 8 个顶点
@@ -35,7 +38,7 @@ int main() {
 		{0, 4}, {1, 5}, {2, 6}, {3, 7}  // 连接前后
 	};
 
-	mathematics::vec3 eye{6.0f, 6.0f, -6.0f }; // 摄像机位置
+	mathematics::vec3 eye{ 1.5f,1.5f, -1.5f }; // 摄像机位置
 	mathematics::vec3 enter{ 0.0f, 0.0f,  0.0f }; // 看向的点
 	mathematics::vec3 up{ 0.0f, 1.0f,  0.0f }; // 上方向
 
@@ -47,6 +50,7 @@ int main() {
 	mathematics::mat4 project;
 	linear_transformation::get_projection_mat(FOV, ((float)WIDTH) / ((float)HEIGHT), NEAR, FAR, project);
 
+	SetConsoleFontSize(1);
 	while (true) { // 动画循环
 		std::vector<mathematics::vec4> temp_cube(cube);
 		angle += 0.1f; // 更新旋转角度
@@ -56,7 +60,7 @@ int main() {
 
 		// 变换立方体的顶点
 		for (auto& vertex : temp_cube) {
-			vertex = (view * (model *vertex));
+			vertex = project * (view * (model * vertex));
 			linear_transformation::project_to_ndc(vertex);
 		}
 
@@ -67,29 +71,19 @@ int main() {
 		}
 
 		// 清空屏幕
-		for (int i = 0; i < WIDTH; ++i) {
-			for (int j = 0; j < HEIGHT; ++j) {
-				screen[i][j] = 0;
-			}
-		}
+		//for (int i = 0; i < WIDTH; ++i) {
+		//	for (int j = 0; j < HEIGHT; ++j) {
+		//		screen[i][j] = 0;
+		//	}
+		//}
 
+		memset(screen, 0, WIDTH * HEIGHT * sizeof(int));
 		// 绘制立方体的边
 		for (const auto& edge : edges) {
 			draw_line(viewport_cube[edge.first], viewport_cube[edge.second]);
 		}
 
-		// 输出屏幕内容
-		for (int y = HEIGHT - 1; y >= 0; --y) {
-			for (int x = 0; x < WIDTH; ++x) {
-				if (screen[x][y] == 1) {
-					std::cout << "*";
-				}
-				else {
-					std::cout << " ";
-				}
-			}
-			std::cout << "\n";
-		}
+		std::cout << render_screen();
 
 		std::cout << "\033[H"; // 使用ANSI转义序列将光标移回屏幕顶部
 		std::this_thread::sleep_for(std::chrono::milliseconds(30)); // 控制帧率
@@ -128,4 +122,46 @@ void draw_line(mathematics::vec2 start, mathematics::vec2 end) {
 			y0 += sy;
 		}
 	}
+}
+
+std::string render_screen()
+{
+	std::string output;
+	for (int y = HEIGHT - 1; y >= 0; --y) {
+		for (int x = 0; x < WIDTH; ++x) {
+			if (screen[x][y] == 1) {
+				output += "*";
+			}
+			else {
+				output += " ";
+			}
+		}
+		output += "\n";
+	}
+	return output;
+}
+
+#include <windows.h>
+
+void SetConsoleFontSize(int fontSize) {
+	// 获取控制台窗口句柄
+	HWND consoleWindow = GetConsoleWindow();
+
+	// 获取控制台输出设备的句柄
+	HANDLE consoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	// 获取当前的控制台字体信息
+	CONSOLE_FONT_INFOEX fontInfo;
+	fontInfo.cbSize = sizeof(fontInfo);
+	GetCurrentConsoleFontEx(consoleOutput, FALSE, &fontInfo);
+
+	// 设置新的字体大小
+	fontInfo.dwFontSize.X = fontSize; // 字体宽度
+	fontInfo.dwFontSize.Y = fontSize; // 字体高度
+
+	// 你也可以更改字体名称等其他属性
+	wcscpy_s(fontInfo.FaceName, L"Consolas"); // 使用你喜欢的字体名
+
+	// 应用新的字体设置
+	SetCurrentConsoleFontEx(consoleOutput, FALSE, &fontInfo);
 }
